@@ -18,4 +18,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Add entrypoint
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
