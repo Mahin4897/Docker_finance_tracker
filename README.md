@@ -1,120 +1,164 @@
 # Docker Finance Tracker
 
-A Django-based finance tracker project, fully containerized with Docker and using MySQL as the database.
+A Django-based finance tracker application fully containerized with **Docker**, using **PostgreSQL** as the database and **pgAdmin** for database management.
 
 ---
 
 ## Table of Contents
 
-- [Docker Finance Tracker](#docker-finance-tracker)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Prerequisites](#prerequisites)
-  - [Setup \& Run](#setup--run)
-  - [Docker Commands](#docker-commands)
-  - [Environment Variables](#environment-variables)
-  - [Project Structure](#project-structure)
-  - [Notes](#notes)
+* [Docker Finance Tracker](#docker-finance-tracker)
+* [Features](#features)
+* [Prerequisites](#prerequisites)
+* [Quick Start](#quick-start)
+* [Environment Variables](#environment-variables)
+* [Docker Commands](#docker-commands)
+* [Services & Ports](#services--ports)
+* [Project Structure](#project-structure)
+* [Notes](#notes)
 
 ---
 
 ## Features
 
-- Track finances and manage transactions  
-- Django REST Framework APIs ready  
-- MySQL database for persistent storage  
-- Fully containerized with Docker  
+* Django + Django REST Framework
+* PostgreSQL database (Dockerized)
+* pgAdmin for database inspection
+* Docker Compose–based setup
+* Ready for development & production workflows
 
 ---
 
 ## Prerequisites
 
-- Docker  
-- Docker Compose  
-- Python 3.12 (for local development, optional)  
+Make sure you have the following installed:
+
+* Docker
+* Docker Compose (v2+)
+* Git
+
+(Optional for local development without Docker)
+
+* Python 3.12+
 
 ---
 
-## Setup & Run
+## Quick Start
 
-1. **Clone the repository**
+### 1️⃣ Clone the repository
 
 ```bash
 git clone <your-repo-url>
 cd Docker_finance_tracker
 ```
 
-2. **Create `.env` file** in the project root:
+### 2️⃣ Create `.env` file (required)
+
+Create a `.env` file in the project root:
 
 ```env
-DB_NAME=financetracke
-DB_USER=Mahin
-DB_PASSWORD=your_password
+DEBUG=1
+SECRET_KEY="django-insecure-change-me"
+
+POSTGRES_DB=finance_tracker
+POSTGRES_USER=finance_user
+POSTGRES_PASSWORD=finance_pass
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 ```
 
-3. **Build and start the Docker containers**
-
-```bash
-docker compose up --build
-```
-
-4. **Access the app**
-
-- Django: `http://localhost:8000`  
-- MySQL: accessible via container `mysql_db`  
+> ⚠️ **Important**: The `SECRET_KEY` must be quoted if it contains `$` characters.
 
 ---
 
-## Docker Commands
-
-- **Build images and start containers**
+### 3️⃣ Build and start containers
 
 ```bash
 docker compose up --build
 ```
 
-- **Run containers in detached mode**
+---
 
-```bash
-docker compose up -d --build
-```
+### 4️⃣ Access the application
 
-- **Execute Django commands inside container**
+* **Django app** → [http://localhost:8000](http://localhost:8000)
+* **pgAdmin** → [http://localhost:5050](http://localhost:5050)
 
-```bash
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createsuperuser
-docker compose exec web python manage.py runserver 0.0.0.0:8000
-```
-
-- **Stop containers**
-
-```bash
-docker compose down
-```
+  * Email: 
+  * Password: 
 
 ---
 
 ## Environment Variables
 
-| Variable     | Description                  |
-|-------------|------------------------------|
-| `DB_NAME`   | Name of MySQL database       |
-| `DB_USER`   | MySQL user                   |
-| `DB_PASSWORD` | Password for MySQL user    |
+| Variable            | Description                           |
+| ------------------- | ------------------------------------- |
+| `DEBUG`             | Enable Django debug mode (`1` or `0`) |
+| `SECRET_KEY`        | Django secret key                     |
+| `POSTGRES_DB`       | PostgreSQL database name              |
+| `POSTGRES_USER`     | PostgreSQL user                       |
+| `POSTGRES_PASSWORD` | PostgreSQL password                   |
+| `POSTGRES_HOST`     | Database host (use `db` for Docker)   |
+| `POSTGRES_PORT`     | PostgreSQL port (`5432`)              |
+
+---
+
+## Docker Commands
+
+### Build & run containers
+
+```bash
+docker compose up --build
+```
+
+### Run in detached mode
+
+```bash
+docker compose up -d --build
+```
+
+### Stop containers
+
+```bash
+docker compose down
+```
+
+### Remove containers and volumes (⚠️ deletes DB data)
+
+```bash
+docker compose down -v
+```
+
+### Run Django commands inside container
+
+```bash
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py createsuperuser
+docker compose exec web python manage.py collectstatic
+```
+
+---
+
+## Services & Ports
+
+| Service   | Description         | Port              |
+| --------- | ------------------- | ----------------- |
+| `web`     | Django application  | `8000`            |
+| `db`      | PostgreSQL database | `5432` (internal) |
+| `pgadmin` | PostgreSQL admin UI | `5050`            |
 
 ---
 
 ## Project Structure
 
-```
+```text
 Docker_finance_tracker/
-├─ finance_tracker/         # Django project root
+├─ finance_tracker/          # Django project root
 │  ├─ manage.py
-│  ├─ core/                 # Django project settings & WSGI
-│  └─ ...  
-├─ Dockerfile
+│  ├─ finance_tracker/       # settings, urls, wsgi, asgi
+│  ├─ apps/                  # Django apps
+│  └─ ...
 ├─ docker-compose.yml
+├─ Dockerfile
 ├─ requirements.txt
 ├─ .env
 └─ README.md
@@ -124,6 +168,16 @@ Docker_finance_tracker/
 
 ## Notes
 
-- Make sure the `manage.py` file exists at the root of your Django project (`finance_tracker/manage.py`).  
-- All Django commands inside Docker should be run with `python manage.py <command>`.  
-- If MySQL port `3306` is already in use, update the `docker-compose.yml` port mapping.  
+* Django runs inside Docker using `runserver` (development mode).
+* PostgreSQL data is persisted using Docker volumes.
+* pgAdmin connects to PostgreSQL using host `db` (not `localhost`).
+* Static files must be collected for DRF Browsable API styling in production.
+* For production, consider adding:
+
+  * Gunicorn
+  * Nginx
+  * Celery + Redis
+
+---
+
+🚀 **You’re now ready to develop with Docker + Django + PostgreSQL!**
