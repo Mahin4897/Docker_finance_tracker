@@ -94,9 +94,9 @@ docker compose up --build
 | ------------------- | ------------------------------------- |
 | `DEBUG`             | Enable Django debug mode (`1` or `0`) |
 | `SECRET_KEY`        | Django secret key                     |
-| `POSTGRES_DB`       | PostgreSQL database name              |
+| `POSTGRES_DB`       |              |
 | `POSTGRES_USER`     | PostgreSQL user                       |
-| `POSTGRES_PASSWORD` | PostgreSQL password                   |
+| `POSTGRES_PASSWORD` |                  |
 | `POSTGRES_HOST`     | Database host (use `db` for Docker)   |
 | `POSTGRES_PORT`     | PostgreSQL port (`5432`)              |
 
